@@ -10,7 +10,9 @@ app.use(express.json());
 
 // Send user to the ajax page
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
-app.get("/add", (req, res) => res.sendFile(path.join(__dirname, "notes.html")));
+app.get("/notes", (req, res) =>
+  res.sendFile(path.join(__dirname, "notes.html"))
+);
 
 // app.get("/", (req, res) => {
 //   res.send("the server is listening");
