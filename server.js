@@ -10,12 +10,12 @@ app.use(express.json());
 
 // Send user to the ajax page
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
-app.get("/", (req, res) => res.sendFile(path.join(__dirname, "notes.html")));
+app.get("/add", (req, res) => res.sendFile(path.join(__dirname, "notes.html")));
 
-app.get("/", (req, res) => {
-  res.send("the server is listening");
-});
+// app.get("/", (req, res) => {
+//   res.send("the server is listening");
+// });
 
 app.listen(PORT, () => {
-  console.log(`server is running on ${PORT}1`);
+  console.log(`server is running on ${PORT}`);
 });
