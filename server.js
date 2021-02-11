@@ -39,10 +39,13 @@ app.post("/api/notes", (req, res) =>
     console.log(newNote);
     // fs write file sync take user input and wrote ot back to json file
     fs.writeFileSync("./db/db.json", JSON.stringify(savedNote));
+    return res.end();
   })
 );
 
+// delete note
 app.delete;
+
 app.listen(PORT, () => {
   console.log(`server is running on ${PORT}`);
 });
