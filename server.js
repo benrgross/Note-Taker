@@ -1,13 +1,9 @@
 const express = require("express");
-// const { fstat } = require("fs");
 const path = require("path");
-const notes = require("./db/db.json");
 const fs = require("fs");
-// const { json } = require("express");
-// const { notStrictEqual } = require("assert");
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3000;
 
 //set up the express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
@@ -16,22 +12,23 @@ app.use(express.static("public"));
 
 // Send user to the ajax page
 app.get("/", (req, res) =>
-  res.sendFile(path.join(__dirname, "./public/index.html"))
+  res.sendFile(path.join(__dirname, "public/index.html"))
 );
 app.get("/notes", (req, res) =>
-  res.sendFile(path.join(__dirname, "./public/notes.html"))
+  res.sendFile(path.join(__dirname, "public/notes.html"))
 );
 
 // make route for GET /api/notes
-app.get("/api/notes", (req, res) => res.json(notes));
+app.get("/api/notes", function (req, res) {
+  res.sendFile(path.join(__dirname, "db/db.json"));
+});
 // make route for POST /api/notes
 
-app.post("/api/notes", (req, res) =>
+app.post("/api/notes", function (req, res) {
   // read file
-  fs.readFile("./db/db.json", "utf8", function (err, data) {
+  fs.readFile(path.join(__dirname, "db/db.json"), "utf8", function (err, data) {
     if (err) {
       console.log(err);
-      return;
     }
 
     let savedNotes = JSON.parse(data);
@@ -41,15 +38,16 @@ app.post("/api/notes", (req, res) =>
     savedNotes.push(newNote);
     console.log(newNote);
     // fs write file sync take user input and wrote ot back to json file
-    fs.writeFileSync("./db/db.json", JSON.stringify(savedNotes));
-    res.json(req.body);
-    return console.log("Added new note: " + newNote.title);
-  })
-);
+    res.json(newNote);
+    fs.writeFileSync(
+      path.join(__dirname, "db/db.json"),
+      JSON.stringify(savedNotes)
+    );
+    console.log("Added new note: " + newNote.title);
+  });
+});
 
-// app.get("/api/notes/:id", function (req, res) )
-
-// delete note
+// delete note by filtering out using note id and rewriting file
 app.delete("/api/notes/:id", function (req, res) {
   let readNotes = fs.readFileSync("./db/db.json", "utf-8", (err) =>
     err ? console.log(error) : console.log("reading .json")
@@ -61,7 +59,6 @@ app.delete("/api/notes/:id", function (req, res) {
   fs.writeFileSync("./db/db.json", JSON.stringify(notesKept), (err) =>
     err ? console.log(error) : console.log("deleting note")
   );
-  console.log("notes kept", notesKept);
   res.json(notesKept);
 });
 
