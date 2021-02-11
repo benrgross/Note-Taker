@@ -53,8 +53,6 @@ app.delete("/api/notes/:id", function (req, res) {
     err ? console.log(error) : console.log("reading .json")
   );
   readNotes = JSON.parse(readNotes);
-  console.log("notes read", readNotes);
-  console.log("params id", req.params.id);
   let notesKept = readNotes.filter((note) => note.id !== Number(req.params.id));
   fs.writeFileSync("./db/db.json", JSON.stringify(notesKept), (err) =>
     err ? console.log(error) : console.log("deleting note")
