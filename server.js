@@ -4,6 +4,7 @@ const path = require("path");
 const notes = require("./db/db.json");
 const fs = require("fs");
 const { json } = require("express");
+const { notStrictEqual } = require("assert");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -35,16 +36,35 @@ app.post("/api/notes", (req, res) =>
 
     let savedNote = JSON.parse(data);
     let newNote = req.body;
+    let noteId = savedNote.length.toString();
+    newNote.id = noteId;
     savedNote.push(newNote);
     console.log(newNote);
     // fs write file sync take user input and wrote ot back to json file
-    fs.writeFileSync("./db/db.json", JSON.stringify(savedNote));
+    fs.writeFileSync("./db/db.json", JSON.stringify(savedNote), (err) =>
+      err ? console.log(error) : console.log("saving note")
+    );
     return res.end();
   })
 );
 
 // delete note
-app.delete;
+app.delete("/api/notes/:id", function (req, res) {
+  let readNotes = fs.readFileSync("./db/db.json", "utf-8", (err) =>
+    err ? console.log(error) : console.log("reading .json")
+  );
+  readNotes = JSON.parse(readNotes);
+  console.log("notes read", readNotes);
+  console.log("params id", req.params.id);
+  //   readNotes = JSON.stringify(readNotes);
+  //   console.log("string", notes);
+  let notesKept = readNotes.filter((note) => note.id !== req.params.id);
+  fs.writeFileSync("./db/db.json", JSON.stringify(notesKept), (err) =>
+    err ? console.log(error) : console.log("deleting note")
+  );
+  console.log(notesKept);
+  return res.end();
+});
 
 app.listen(PORT, () => {
   console.log(`server is running on ${PORT}`);
